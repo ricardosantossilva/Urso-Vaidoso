@@ -112,7 +112,7 @@ function render(t){
   // NAÇÕES
   if(t>=s.cta.start && t<s.end.start){ const c=s.cta.subs;
     props+=card(140,470,800,back((t-c[0].start)/.3),`<div style="font-weight:900;font-size:50px;color:#0A1F3C">Comprar · vender · partilhar</div><div style="font-size:80px;margin-top:4px">🏠🧮🐻</div>`,-2);
-    if(t>c[2].start-.05) props+=card(170,760,740,back((t-c[2].start+.05)/.3),`<div style="font-weight:800;font-size:44px;color:#0A1F3C">Contabilidade certificada</div><div style="font-weight:900;font-size:86px;color:#7A2E3A">desde €29<span style="font-size:40px">/mês + IVA</span></div>`,2); }
+    if(t>c[2].start-.05) props+=card(170,760,740,back((t-c[2].start+.05)/.3),`<div style="font-weight:800;font-size:44px;color:#0A1F3C">Contabilidade certificada</div><div style="font-weight:900;font-size:86px;color:#7A2E3A">desde €29<span style="font-size:40px">/mês + IVA</span></div><div style="font-weight:800;font-size:38px;color:#0A1F3C;margin-top:6px">hello@ursovaidoso.com</div>`,2); }
   if(t>=s.end.start){ const q=ease((t-s.end.start)/.5);
     props+=`<div id="endCard" style="opacity:${q};transform:translateY(${(1-q)*40}px);top:440px"><div class="wm" style="color:#fff;text-shadow:0 4px 0 #E2365B">Urso Vaidoso</div><div class="tg" style="color:#FFD45C;text-shadow:none">Vaidade é ter as contas em dia.</div><div class="url">ursovaidoso.com</div><div style="margin-top:14px;font-size:40px;font-weight:800;color:#fff;text-shadow:0 3px 0 #0B2343">hello@ursovaidoso.com</div></div>`; }
   $('props').innerHTML=props;
