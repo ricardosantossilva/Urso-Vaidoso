@@ -1,0 +1,128 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>
+*{box-sizing:border-box} html,body{margin:0;background:#000}
+#stage{position:relative;width:1080px;height:1920px;overflow:hidden;font-family:"Inter",sans-serif}
+.layer{position:absolute;left:0;top:0;width:1080px;height:1920px}
+#world{position:absolute;inset:0;transform-origin:540px 1200px}
+.ch{position:absolute} .ch svg{width:100%;height:100%;overflow:visible}
+#sub{position:absolute;left:50px;right:50px;top:200px;text-align:center;font-weight:800;font-size:68px;line-height:1.14;color:#fff;
+  text-shadow:0 6px 0 #000,0 -4px 0 #000,5px 0 0 #000,-5px 0 0 #000,4px 4px 0 #000,-4px -4px 0 #000,4px -4px 0 #000,-4px 4px 0 #000}
+#sub .hl{color:#FFD45C}
+#flashW{position:absolute;inset:0;background:#fff;opacity:0}
+#flashR{position:absolute;inset:0;background:radial-gradient(circle at 50% 55%,transparent 35%,rgba(200,20,30,.8) 100%);opacity:0}
+.big{position:absolute;left:0;right:0;text-align:center;font-weight:900;color:#fff;text-shadow:0 6px 0 #0B2343,0 0 30px rgba(0,0,0,.35)}
+.card{position:absolute;background:#FBF5EA;border-radius:26px;box-shadow:0 24px 50px rgba(0,0,0,.4);overflow:hidden}
+#endCard{position:absolute;left:0;right:0;text-align:center}
+#endCard .wm{font-family:"Lora",serif;font-weight:700;font-size:120px;color:#0B2343;text-shadow:0 4px 0 #fff}
+#endCard .tg{font-family:"Lora",serif;font-style:italic;font-size:56px;color:#7A2E3A;margin-top:6px;text-shadow:0 3px 0 #fff}
+#endCard .url{display:inline-block;margin-top:24px;font-size:44px;font-weight:800;color:#fff;background:#0B2343;padding:14px 34px;border-radius:40px}
+</style></head>
+<body>
+<div id="stage">
+ <div id="world">
+  <div class="layer" id="bg"></div>
+  <div class="layer" id="back"></div>
+  <div class="ch" id="girl"></div>
+  <div class="ch" id="bear"></div>
+  <div class="layer" id="props"></div>
+ </div>
+ <div id="flashR"></div><div id="flashW"></div>
+ <div id="sub"></div>
+</div>
+<script src="bear.js"></script><script src="girl.js"></script><script src="scenes5.js"></script>
+<script>
+const TL = __TL__;
+const L = {}; TL.lines.forEach((l,i)=>{L[l.id]=l; l.next=(TL.lines[i+1]||{start:TL.duration}).start;});
+const s=L, $=id=>document.getElementById(id);
+const clamp=(x,a=0,b=1)=>Math.max(a,Math.min(b,x));
+const ease=x=>{x=clamp(x);return x<.5?2*x*x:1-Math.pow(-2*x+2,2)/2};
+const back=x=>{x=clamp(x);const c1=1.9,c3=c1+1;return 1+c3*Math.pow(x-1,3)+c1*Math.pow(x-1,2)};
+function envOf(t,spk){for(const l of TL.lines){if(l.spk===spk&&t>=l.start&&t<l.end){return l.env[Math.floor((t-l.start)*30)]||0;}}return 0;}
+function hl(x){return x.replace(/(\d+,?\d*%?|IVA|IMT|Imposto do Selo|pulou a cerca|casa nova|bilionário|divórcio|metade|fiel|teso|Vaidade)/gi,'<span class="hl">$1</span>');}
+const up=(sh,el,inner)=>`<g transform="rotate(${-(sh+el)})">${inner}</g>`;
+const PHONE=`<g transform="translate(0 -40)"><rect x="-38" y="-70" width="76" height="130" rx="12" fill="#1B2430"/><rect x="-32" y="-60" width="64" height="104" rx="6" fill="#DDEBF7"/><rect x="-24" y="-50" width="48" height="30" rx="4" fill="#C8202C"/><rect x="-24" y="-12" width="40" height="7" rx="3" fill="#9FB3C8"/><rect x="-24" y="2" width="30" height="7" rx="3" fill="#9FB3C8"/></g>`;
+const HEART=(c='#E2365B')=>`<svg viewBox="0 0 100 90" width="90" height="81"><path d="M50 88 C 10 60, 0 35, 12 18 C 24 2, 44 6, 50 22 C 56 6, 76 2, 88 18 C 100 35, 90 60, 50 88 Z" fill="${c}"/></svg>`;
+const PB=o=>Object.assign({eyes:'open',look:.4,brow:0,armL:{sh:12,el:8},armR:{sh:-12,el:-8},lean:0,squash:1,sweat:0,prop:''},o);
+const PG=o=>Object.assign({eyes:'open',look:-.4,brow:0,armL:{sh:12,el:8},armR:{sh:-12,el:-8},lean:0,squash:1,prop:''},o);
+const KB=[
+ [0,PB({eyes:'open',look:.3,armL:{sh:-30,el:-110},prop:'phone',brow:10})],
+ [s.news.subs[1].start,PB({eyes:'shock',look:.5,armL:{sh:-30,el:-110},prop:'phone',brow:16})],
+ [s.ouch.start,PB({eyes:'open',look:.6,brow:6})],
+ [s.buy.start,PB({eyes:'smug',look:-.3,armR:{sh:-110,el:-10},brow:-6,cut:true})],
+ [s.tax.start,PB({eyes:'open',look:.6,brow:6})],
+ [s.split.start+1.0,PB({eyes:'shock',look:.6,sweat:1,brow:14})],
+ [s.loyal.start,PB({eyes:'smug',look:0,armR:{sh:-20,el:-120},brow:-8})],
+ [s.broke.start+0.15,PB({eyes:'shock',look:.6,armL:{sh:40,el:0},armR:{sh:-40,el:0},sweat:1,brow:16})],
+ [s.cta.start,PB({eyes:'open',look:.6,brow:4,cut:true})],
+ [s.end.start,PB({eyes:'wink',look:0,armL:{sh:150,el:30},brow:-6})],
+];
+const KG=[
+ [0,PG({eyes:'open',look:-.6,brow:4})],
+ [s.ouch.start,PG({eyes:'flat',look:0,armR:{sh:-40,el:-60}})],
+ [s.ouch.subs[1].start,PG({eyes:'smug',look:-.5,armR:{sh:-40,el:-60}})],
+ [s.buy.start,PG({eyes:'roll',look:0,cut:true})],
+ [s.tax.start,PG({eyes:'open',look:0,armR:{sh:-150,el:-10},brow:6})],
+ [s.split.start,PG({eyes:'open',look:0,armR:{sh:-140,el:-20},armL:{sh:60,el:40},brow:8})],
+ [s.loyal.start,PG({eyes:'flat',look:-.6})],
+ [s.broke.start,PG({eyes:'smug',look:-.6,armR:{sh:-40,el:-60},brow:-6})],
+ [s.cta.start,PG({eyes:'wink',look:0,armR:{sh:-150,el:-20},brow:-6,cut:true})],
+ [s.end.start,PG({eyes:'smug',look:0,armL:{sh:100,el:-10}})],
+];
+const num=['look','brow','lean','squash','sweat'];
+function poseAt(K,t){let i=0;while(i<K.length-1&&K[i+1][0]<=t)i++;const a=K[i][1],kb=K[i-1];
+  if(!kb||a.cut)return a; const pv=kb[1]; const f=ease((t-K[i][0])/0.28); const o=Object.assign({},a);
+  num.forEach(k=>o[k]=pv[k]+(a[k]-pv[k])*f); ['armL','armR'].forEach(k=>o[k]={sh:pv[k].sh+(a[k].sh-pv[k].sh)*f,el:pv[k].el+(a[k].el-pv[k].el)*f}); return o;}
+function worldAt(t){ if(t<s.buy.start) return 'estrela'; if(t<s.cta.start) return 'chiado'; return 'nacoes'; }
+const card=(x,y,w,q,inner,rot=0)=>`<div class="card" style="left:${x}px;top:${y}px;width:${w}px;transform:scale(${q}) rotate(${rot}deg);padding:22px 30px;text-align:center">${inner}</div>`;
+const stamp=(x,y,w,q,txt,fs=84,rot=-7)=>`<div style="position:absolute;left:${x}px;top:${y}px;width:${w}px;transform:rotate(${rot}deg) scale(${q});border:14px solid #C8202C;border-radius:24px;background:rgba(255,255,255,.9);text-align:center;padding:14px 10px;font-weight:900;color:#C8202C;font-size:${fs}px;line-height:1.05">${txt}</div>`;
+const HOUSE=`<svg width="300" height="230" viewBox="0 0 300 230"><path d="M20 110 L150 20 L280 110 Z" fill="#B65A3A"/><rect x="40" y="110" width="220" height="110" fill="#F2D7A8"/><rect x="40" y="110" width="110" height="110" fill="#F3C969"/><rect x="125" y="150" width="50" height="70" fill="#6B4A32"/><line x1="150" y1="10" x2="150" y2="225" stroke="#C8202C" stroke-width="8" stroke-dasharray="16 10"/></svg>`;
+function render(t){
+  const w=worldAt(t), pb=poseAt(KB,t), pg=poseAt(KG,t);
+  const eb=envOf(t,'B'), eg=envOf(t,'G');
+  $('bg').innerHTML = w==='estrela'?estrelaSVG(t) : w==='chiado'?chiadoSVG(t) : nacoesSVG(t);
+  const ob={eyes:pb.eyes,look:pb.look,brow:pb.brow,armL:pb.armL,armR:pb.armR,lean:pb.lean+(eb>0.012?Math.sin(t*8)*1.2:0),squash:pb.squash,sweat:pb.sweat,monocle:true,
+    mouth:eb>0.012?Math.min(1,eb*7):0, twirl:(pb.eyes==='smug'?Math.sin(t*7)*7:0), blink:pb.eyes==='open'&&(t%3.3)<0.11};
+  if(pb.prop==='phone') ob.propL=up(pb.armL.sh,pb.armL.el,PHONE);
+  const og={eyes:pg.eyes,look:pg.look,brow:pg.brow,armL:pg.armL,armR:pg.armR,lean:pg.lean+(eg>0.012?Math.sin(t*7)*1.2:0),squash:pg.squash,
+    mouth:eg>0.012?Math.min(1,eg*7):0, blink:pg.eyes==='open'&&((t+1.4)%3.7)<0.11};
+  const B=$('bear'), G=$('girl');
+  const jump = 0;
+  B.style.left='30px'; B.style.top=(1000+jump)+'px'; B.style.width='500px'; B.style.height='833px';
+  G.style.left='560px'; G.style.top='1060px'; G.style.width='460px'; G.style.height='767px';
+  B.innerHTML=bearSVG(ob); G.innerHTML=girlSVG(og);
+  let props='', shx=0, shy=0, red=0, white=0;
+  [s.buy.start,s.cta.start].forEach(tc=>{const d=t-tc; if(d>-0.08&&d<0.25) white=Math.max(white,1-Math.abs(d-0.02)/0.24);});
+  // ESTRELA
+  if(t<s.ouch.start+0.1){ const q=back((t-s.news.subs[1].start+0.05)/.35); if(t>s.news.subs[1].start-.05)
+    props+=`<div class="card" style="left:150px;top:450px;width:780px;transform:scale(${q}) rotate(-2deg)"><div style="background:#C8202C;color:#fff;font-weight:900;font-size:46px;letter-spacing:.18em;text-align:center;padding:14px 0">ÚLTIMA HORA</div><div style="padding:22px 30px;text-align:center;font-weight:900;font-size:58px;color:#0A1F3C;line-height:1.1">CEO famoso dos chips<br>admite que <span style="color:#C8202C">pulou a cerca</span> 🚧</div></div>`; }
+  if(t>=s.ouch.subs[1].start && t<s.buy.start) props+=card(200,500,680,back((t-s.ouch.subs[1].start)/.3),`<div style="font-size:110px">🏠❓</div><div style="font-weight:900;font-size:56px;color:#0A1F3C">Casa nova?</div>`,-3);
+  // CHIADO
+  if(t>=s.buy.start && t<s.tax.start && t>s.buy.subs[1].start-.05) props+=`<div style="position:absolute;left:600px;top:540px;transform:scale(${back((t-s.buy.subs[1].start+.05)/.3)}) rotate(5deg)"><div style="background:#FFD45C;border-radius:18px;padding:14px 26px;font-weight:900;font-size:56px;color:#0A1F3C;box-shadow:0 18px 40px rgba(0,0,0,.35)">💰 bilionário</div></div>`;
+  if(t>=s.tax.start && t<s.split.start){ const c=s.tax.subs;
+    if(t>c[1].start-.05) props+=card(120,430,840,back((t-c[1].start+.05)/.3),`<div style="font-weight:800;font-size:44px;color:#5A6B80">Imposto do Selo</div><div style="font-weight:900;font-size:120px;color:#0A1F3C;line-height:1">0,8%</div>`,-2);
+    if(t>c[2].start-.05) props+=card(300,740,480,back((t-c[2].start+.05)/.3),`<div style="font-weight:900;font-size:76px;color:#C8202C">+ IMT</div>`,3); }
+  if(t>=s.split.start && t<s.loyal.start){ const c=s.split.subs;
+    props+=card(240,420,600,back((t-c[0].start)/.3),`${HOUSE}<div style="font-weight:900;font-size:44px;color:#0A1F3C">Divórcio: partilha</div>`,-2);
+    if(t>c[1].start-.05) props+=card(140,830,800,back((t-c[1].start+.05)/.3),`<div style="font-weight:900;font-size:48px;color:#0A1F3C">0,8% sobre o excesso<br>da sua metade</div>`,2); }
+  if(t>=s.loyal.start && t<s.broke.start){ props+=stamp(240,520,600,back((t-s.loyal.start-0.2)/.25),'FIEL ✔',100,-5).replace('#C8202C','#2FA36B').replace('color:#C8202C','color:#2FA36B');
+    for(let i=0;i<3;i++){const tt=((t-s.loyal.start)*0.9+i/3)%1; props+=`<div style="position:absolute;left:${260+Math.sin(tt*8+i)*40}px;top:${1150-tt*300}px;opacity:${1-tt}">${HEART()}</div>`;} }
+  if(t>=s.broke.start && t<s.cta.start){ props+=stamp(200,520,680,back((t-s.broke.start-0.05)/.25),'E TESO 🪫<br><span style="font-size:110px">€0,00</span>',84,-7);
+    if(t<s.broke.start+0.35){shx=Math.sin(t*100)*12;} }
+  // NAÇÕES
+  if(t>=s.cta.start && t<s.end.start){ const c=s.cta.subs;
+    props+=card(140,470,800,back((t-c[0].start)/.3),`<div style="font-weight:900;font-size:50px;color:#0A1F3C">Comprar · vender · partilhar</div><div style="font-size:80px;margin-top:4px">🏠🧮🐻</div>`,-2);
+    if(t>c[2].start-.05) props+=card(170,760,740,back((t-c[2].start+.05)/.3),`<div style="font-weight:800;font-size:44px;color:#0A1F3C">Contabilidade certificada</div><div style="font-weight:900;font-size:86px;color:#7A2E3A">desde €29<span style="font-size:40px">/mês + IVA</span></div>`,2); }
+  if(t>=s.end.start){ const q=ease((t-s.end.start)/.5);
+    props+=`<div id="endCard" style="opacity:${q};transform:translateY(${(1-q)*40}px);top:440px"><div class="wm" style="color:#fff;text-shadow:0 4px 0 #E2365B">Urso Vaidoso</div><div class="tg" style="color:#FFD45C;text-shadow:none">Vaidade é ter as contas em dia.</div><div class="url">ursovaidoso.com</div></div>`; }
+  $('props').innerHTML=props;
+  const zoom=(shx||shy)?1.04:1;
+  $('world').style.transform=`translate(${shx}px,${shy}px) scale(${zoom})`;
+  $('flashR').style.opacity=red; $('flashW').style.opacity=white*0.85;
+  let sub=''; for(const l of TL.lines){for(const c of l.subs){if(t>=c.start-0.05&&t<c.end+0.12)sub=c.text;}}
+  if(!sub){for(const l of TL.lines){if(t>=l.end&&t<l.next-0.05)sub=l.subs[l.subs.length-1].text;}}
+  if(t>=s.end.start) sub='';
+  $('sub').innerHTML=hl(sub);
+}
+window.render=render; render(0);
+</script></body></html>
