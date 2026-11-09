@@ -10,7 +10,8 @@ Everything needed to make a daily Urso Vaidoso cartoon short (1080x1920, 30 fps,
 ## Format that works
 - English voices, Portuguese subtitles at the top (Inter 800, 68 px, white with black outline, key words yellow).
 - Bear on the left (left 30, top 1000, 500x833), girl on the right (left 560, top 1060, 460x767). Only the speaker's mouth moves.
-- Hook in the first 2 s tied to a real news story of the day. Bear misunderstands, girl explains the verified tax/accounting fact, a visual gag (stamp, faint, crying, money rain), punchline, CTA: "A Urso Vaidoso faz as contas. Desde 29 euros por mes + IVA", end card "Urso Vaidoso / Vaidade e ter as contas em dia / ursovaidoso.com".
+- Hook in the first 2 s tied to a real news story of the day. Bear misunderstands, girl explains the verified tax/accounting fact, a visual gag (stamp, faint, crying, money rain), punchline, CTA: "A Urso Vaidoso faz as contas. Desde 29 euros por mes + IVA", end card "Urso Vaidoso / Vaidade e ter as contas em dia / ursovaidoso.com / hello@ursovaidoso.com".
+- **Always show the email hello@ursovaidoso.com** (owner instruction, 9 Nov 2026): on the price/CTA card, on the end card, and in every TikTok and YouTube caption.
 - 3 or 4 backgrounds per video, white flash + whoosh at each change. **Never reuse a background**: check `../videos/BACKGROUNDS.md` and add the new ones after publishing. Each background is a function `xxxSVG(t)` returning a full 1080x1920 SVG with something gently moving.
 - No singing (tested, rejected). No named real people or companies in the video or captions; refer to them generically ("um CEO famoso dos chips"). Never repeat unproven allegations.
 
