@@ -1,0 +1,60 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+*{box-sizing:border-box}body{margin:0}
+.p{position:relative;width:1080px;height:1350px;overflow:hidden;font-family:Inter,Arial,sans-serif}
+.bubble{position:absolute;background:#fff;border-radius:44px;padding:40px 46px;box-shadow:0 22px 50px rgba(0,0,0,.28);color:#0B2343}
+.tailL:after,.tailR:after{content:"";position:absolute;bottom:-62px;border:34px solid transparent;border-top-color:#fff}
+.tailL:after{left:70px;border-left-color:#fff}.tailR:after{right:90px;border-right-color:#fff}
+.big{font-weight:900;font-size:64px;line-height:1.08}
+.small{font-weight:600;font-size:34px;color:#5A6B80;margin-top:16px;line-height:1.25}
+.hl{color:#7A2E3A}
+.foot{position:absolute;left:0;right:0;bottom:0;height:96px;background:#0B2343;color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 48px;font-weight:800;font-size:32px}
+.foot .b{font-family:Lora,Georgia,serif;font-size:40px;color:#D4AF5F}
+.ch{position:absolute}.ch svg{width:100%;height:100%;overflow:visible}
+.row{display:flex;justify-content:space-between;align-items:center;padding:18px 0;border-bottom:3px solid #EFE6D6}
+.row:last-child{border-bottom:none}
+</style></head><body><div id="root"></div>
+<script src="bear.js"></script><script src="girl.js"></script>
+<script>
+const B=o=>bearSVG(Object.assign({eyes:'open',look:.3,armL:{sh:12,el:8},armR:{sh:-12,el:-8},monocle:true},o));
+const G=o=>girlSVG(Object.assign({eyes:'open',look:-.3,armL:{sh:12,el:8},armR:{sh:-12,el:-8}},o));
+const foot=`<div class="foot"><span class="b">Urso Vaidoso</span><span>hello@ursovaidoso.com</span></div>`;
+const BGS=[['#FBF5EA','#E9DCC6'],['#0B2343','#16345F'],['#E7F1EA','#CFE3D5'],['#F6E6E8','#EBCFD3'],['#E6F0F8','#CFE0EF'],['#F8EED2','#EADBB0']];
+const pat=i=>{const [a,b]=BGS[i%BGS.length];return `background:${a};background-image:radial-gradient(${b} 3px,transparent 3px);background-size:44px 44px`;};
+const bearL=(pose,top=600)=>`<div class="ch" style="left:-10px;top:${top}px;width:500px;height:833px">${B(pose)}</div>`;
+const girlR=(pose,top=580)=>`<div class="ch" style="left:560px;top:${top}px;width:480px;height:800px">${G(pose)}</div>`;
+const bubL=(big,small,fs=64)=>`<div class="bubble tailL" style="left:300px;top:80px;width:730px"><div class="big" style="font-size:${fs}px">${big}</div><div class="small">${small}</div></div>`;
+const bubR=(big,small,fs=64)=>`<div class="bubble tailR" style="left:50px;top:80px;width:730px"><div class="big" style="font-size:${fs}px">${big}</div><div class="small">${small}</div></div>`;
+const wave={armR:{sh:-150,el:-20}}, up2={armR:{sh:-150,el:-20},armL:{sh:150,el:30}}, point={armR:{sh:-150,el:-10}};
+const P=[
+ ['B',bubL('IVA trimestral: declarar <span class="hl">não é</span> pagar.','Declaração até dia 20 e pagamento até dia 25 do 2.º mês a seguir ao trimestre.'),{eyes:'shock',sweat:1,...up2}],
+ ['G',bubR('Recibos verdes: Segurança Social de <span class="hl">21,4%</span> sobre 70% do rendimento.','Declaração trimestral em janeiro, abril, julho e outubro.',60),{eyes:'open',armL:{sh:150,el:20}}],
+ ['B',bubL('Regime simplificado: até <span class="hl">200.000 €</span> de rendimentos por ano.','Acima disso, passa a contabilidade organizada.'),{eyes:'smug',...point}],
+ ['G',`<div class="bubble tailR" style="left:50px;top:80px;width:760px"><div class="big" style="font-size:52px">No regime simplificado, o IRS só conta <span class="hl">parte</span> do que fatura:</div>
+   <div style="margin-top:18px">${[['Profissões do art. 151.º','75%'],['Outros serviços','35%'],['Vendas','15%']].map(r=>`<div class="row"><span style="font-weight:800;font-size:38px">${r[0]}</span><span style="font-weight:900;font-size:52px;color:#7A2E3A">${r[1]}</span></div>`).join('')}</div>
+   <div class="small" style="font-size:28px">Coeficientes aplicados aos rendimentos.</div></div>`,{eyes:'wink',armL:{sh:150,el:20}},640],
+ ['B',bubL('IRC 2026: <span class="hl">15%</span> nos primeiros 50.000 € de lucro.','Para PME. No resto do lucro, a taxa geral é de 19%.'),{eyes:'open',...wave}],
+ ['G',bubR('Salário mínimo 2026: <span class="hl">920 €</span>.','A empresa paga ainda 23,75% de TSU. O trabalhador desconta 11%.'),{eyes:'open',armR:{sh:-150,el:-10}}],
+ ['B',bubL('Um trabalhador ao salário mínimo custa <span class="hl">1.138,50 €</span> por mês à empresa.','920 € + 23,75% de TSU. Sem contar subsídios, seguro e outros custos.',58),{eyes:'shock',sweat:1}],
+ ['G',bubR('Paga renda? <span class="hl">15%</span> abate ao IRS, até 900 €.','Com contrato registado nas Finanças e recibos eletrónicos do senhorio.'),{eyes:'smug',armL:{sh:150,el:20}}],
+ ['B',bubL('Comprar casa? <span class="hl">0,8%</span> de Imposto do Selo.','Mais IMT, conforme o valor e o tipo de imóvel.'),{eyes:'shock',...up2}],
+ ['B',bubL('Ganhou um prémio? <span class="hl">20%</span> de Imposto do Selo acima de 5.000 €.','Jogos sociais do Estado: retido na fonte, não se declara no IRS.',60),{eyes:'smug',...up2}],
+ ['G',bubR('Carro da empresa: IVA do gasóleo dedutível a <span class="hl">50%</span>. Gasolina: 0%.','Ligeiros de passageiros, regime normal de IVA, fatura com NIF.',58),{eyes:'flat',armR:{sh:-150,el:-10}}],
+ ['B',bubL('Documentos? Tire uma <span class="hl">foto</span>. 📸','Envie por email ou WhatsApp. Nós tratamos do resto.'),{eyes:'wink',...wave}],
+ ['G',bubR('Resposta em <span class="hl">1 dia útil</span>.','Um contabilista que responde às mensagens. Imagine.'),{eyes:'wink',armL:{sh:150,el:20}}],
+ ['B',bubL('Mudar de contabilista? <span class="hl">Nós tratamos</span> da passagem.','Pedimos o dossier, vemos o que falta e seguimos sem perder prazos.',60),{eyes:'smug',...point}],
+ ['G',bubR('Criar empresa: <span class="hl">grátis</span> com o plano anual Crescimento ou Escala.','Avulso: 349 € + emolumentos.',60),{eyes:'open',armR:{sh:-150,el:-10}}],
+ ['B',bubL('Também fazemos <span class="hl">websites</span>. 🌐','490 € + 29 €/mês + IVA. Até 5 páginas, com versão mobile.'),{eyes:'smug',...wave}],
+ ['G',bubR('Starting a business in Portugal? <span class="hl">We speak English.</span>','Portugal Launch from €1,490 + €199/month + VAT.',60),{eyes:'wink',armL:{sh:150,el:20}}],
+ ['B',bubL('Sede fiscal: <span class="hl">30 €/mês</span>.','Morada para a sua empresa, até 10 cartas por mês digitalizadas.'),{eyes:'open',...point}],
+ ['G',bubR('Contas assinadas por <span class="hl">Contabilista Certificado</span>.','Sociedade inscrita na Ordem dos Contabilistas Certificados.',60),{eyes:'smug',armR:{sh:-150,el:-10}}],
+ ['B',bubL('<span class="hl">Vaidade</span> é ter as contas em dia.','Urso Vaidoso. Contabilidade certificada, preço fixo.'),{eyes:'wink',...wave,twirl:6}],
+];
+document.getElementById('root').innerHTML=P.map((p,i)=>{const [who,html,pose,top]=p;
+  const ch= who==='B'?bearL(pose,top||600):girlR(pose,top||580);
+  return `<div class="p" id="p${i}" style="${pat(i)}">${ch}${html}${foot}</div>`;}).join('');
+
+document.querySelectorAll('.p').forEach(p=>{const bub=p.querySelector('.bubble');const ch=p.querySelector('.ch');
+  const bb=bub.offsetTop+bub.offsetHeight+70; const H=Math.max(720,Math.min(1080,1560-bb)); const W=H*0.6;
+  ch.style.height=H+'px'; ch.style.width=W+'px'; ch.style.top=bb+'px';
+  if(ch.style.left==='560px'){ch.style.left=(1080-W+20)+'px';} else {ch.style.left='-10px';}});
+</script></body></html>
