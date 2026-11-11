@@ -8,3 +8,4 @@
 | 2026-11-09 | 2026-11-09-irs-novembro.mp4 | November IRS withholding cut by half | Government announcement, Oct 2026 |
 | 2026-11-09 | 2026-11-09-numero-7.mp4 | Opening activity: 12 months no Segurança Social, art. 53 IVA exemption up to 15.000 euros | National team captain retires (5 Nov 2026, eco.sapo.pt, euronews) |
 | 2026-11-10 | 2026-11-10-euromilhoes-selo.mp4 | Lottery prizes: 20% Imposto do Selo on the part above 5.000 euros (TGIS verba 11.4), withheld at source, not declared in IRS | Euromilhões jackpot 141M euros on 10 Nov 2026 (executivedigest.sapo.pt, magazine-hd.com) |
+| 2026-11-11 | 2026-11-11-iva-combustivel.mp4 | Fuel VAT deduction (CIVA art. 21): petrol 0% on ordinary cars, diesel 50%, EV/plug-in electricity deductible; normal VAT regime + invoice with NIF | Fuel prices fall about 10 cents/litre from 9 Nov 2026 (dn.pt, euronews.com); São Martinho |

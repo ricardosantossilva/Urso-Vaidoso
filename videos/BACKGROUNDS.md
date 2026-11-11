@@ -8,3 +8,4 @@
 - Garden with bandstand and duck pond, estate agency window on an old shopping street, riverside at blue hour with sail tower and cable car (2026-11-09 'pulou a cerca' video)
 - Snack bar with TV, amateur football pitch with stands, tax office counter with ticket board, football locker room (2026-11-09 'numero 7' video)
 - Porto riverside on a rainy evening with coloured houses, iron bridge arch and lottery kiosk; golden Algarve sea cliffs and arches with a golden yacht; living room on a rainy night with TV showing the draw; colourful hilltop palace above misty Sintra woods (2026-11-10 Euromilhões video)
+- Motorway service station with price pylon ticking down, Douro valley vineyard terraces in autumn with rabelo boat, chestnut grove in a schist village with magusto bonfire, Aveiro canal with moliceiro boats and art nouveau facades (2026-11-11 fuel VAT video)
