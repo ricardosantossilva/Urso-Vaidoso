@@ -1,0 +1,34 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+*{box-sizing:border-box}body{margin:0}
+.p{position:relative;width:1080px;height:1350px;overflow:hidden;font-family:Inter,Arial,sans-serif}
+.bubble{position:absolute;background:#fff;border-radius:44px;padding:40px 46px;box-shadow:0 22px 50px rgba(0,0,0,.28);color:#0B2343}
+.bubble:after{content:"";position:absolute;width:0;height:0;border:34px solid transparent}
+.big{font-weight:900;font-size:66px;line-height:1.08}
+.small{font-weight:600;font-size:34px;color:#5A6B80;margin-top:16px;line-height:1.25}
+.hl{color:#7A2E3A}
+.foot{position:absolute;left:0;right:0;bottom:0;height:96px;background:#0B2343;color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 48px;font-weight:800;font-size:32px}
+.foot .b{font-family:Lora,Georgia,serif;font-size:40px;color:#D4AF5F}
+.ch{position:absolute}.ch svg{width:100%;height:100%;overflow:visible}
+</style></head><body><div id="root"></div>
+<script src="bear.js"></script><script src="girl.js"></script>
+<script>
+const B=o=>bearSVG(Object.assign({eyes:'open',look:.3,armL:{sh:12,el:8},armR:{sh:-12,el:-8},monocle:true},o));
+const G=o=>girlSVG(Object.assign({eyes:'open',look:-.3,armL:{sh:12,el:8},armR:{sh:-12,el:-8}},o));
+const foot=`<div class="foot"><span class="b">Urso Vaidoso</span><span>hello@ursovaidoso.com</span></div>`;
+const pat=(c1,c2)=>`background:${c1};background-image:radial-gradient(${c2} 3px,transparent 3px);background-size:44px 44px`;
+const posts=[
+ {bg:pat('#FBF5EA','#E9DCC6'), html:`<div class="bubble" style="left:330px;top:90px;width:690px"><div class="big">Olá! Sou o <span class="hl">Urso Vaidoso.</span></div><div class="small">Contabilidade certificada, 100% online, preço fixo. E um bigode impecável.</div></div><style>#p0 .bubble:after{left:70px;bottom:-62px;border-top-color:#fff;border-left-color:#fff}</style>`,
+  ch:`<div class="ch" style="left:-10px;top:470px;width:560px;height:933px">${B({eyes:'wink',armR:{sh:-150,el:-20},twirl:6})}</div>`},
+ {bg:pat('#0B2343','#16345F'), html:`<div class="bubble" style="left:60px;top:90px;width:700px"><div class="big">Recibos verdes? Até <span class="hl">15.000 €</span> por ano pode ficar isento de IVA.</div><div class="small">Regime do art. 53.º do CIVA, cumpridas as condições.</div></div><style>#p1 .bubble:after{right:90px;bottom:-62px;border-top-color:#fff;border-right-color:#fff}</style>`,
+  ch:`<div class="ch" style="left:560px;top:560px;width:500px;height:833px">${G({eyes:'wink',armL:{sh:150,el:20},look:-.5})}</div>`},
+ {bg:pat('#E7F1EA','#CFE3D5'), html:`<div class="bubble" style="left:280px;top:80px;width:750px"><div class="big" style="font-size:60px">Primeira vez a recibos verdes? <span class="hl">12 meses</span> sem contribuições para a Segurança Social.</div><div class="small">Isenção no primeiro enquadramento como trabalhador independente.</div></div><style>#p2 .bubble:after{left:70px;bottom:-62px;border-top-color:#fff;border-left-color:#fff}</style>`,
+  ch:`<div class="ch" style="left:-10px;top:640px;width:500px;height:833px">${B({eyes:'smug',armR:{sh:-150,el:-20},armL:{sh:150,el:30}})}</div>`},
+ {bg:pat('#F6E6E8','#EBCFD3'), html:`<div class="bubble" style="left:60px;top:90px;width:700px"><div class="big">Fatura <span class="hl">sem NIF</span> não conta para o seu IRS.</div><div class="small">Saúde, educação, casa, restaurantes: peça sempre a fatura com o seu NIF.</div></div><style>#p3 .bubble:after{right:90px;bottom:-62px;border-top-color:#fff;border-right-color:#fff}</style>`,
+  ch:`<div class="ch" style="left:540px;top:560px;width:480px;height:800px">${G({eyes:'flat',armR:{sh:-150,el:-10},look:-.5})}</div>`},
+ {bg:pat('#0B2343','#16345F'), html:`<div style="position:absolute;left:60px;right:60px;top:60px;text-align:center;color:#fff"><div style="font-family:Lora,Georgia,serif;font-weight:700;font-size:76px;color:#D4AF5F">Preço fixo. Sem surpresas.</div></div>
+   ${[['Essencial','29 €','recibos verdes'],['Crescimento','69 €','empresas até 3 trab.'],['Escala','desde 179 €','até 10 trabalhadores']].map((r,i)=>`<div class="bubble" style="left:90px;width:900px;top:${200+i*160}px;padding:24px 40px;display:flex;justify-content:space-between;align-items:center;border-radius:28px"><div><div style="font-weight:900;font-size:50px">${r[0]}</div><div style="font-weight:600;font-size:30px;color:#5A6B80">${r[2]}</div></div><div style="font-weight:900;font-size:62px;color:#7A2E3A">${r[1]}</div></div>`).join('')}
+   <div style="position:absolute;left:0;right:0;top:690px;text-align:center;color:#fff;font-weight:700;font-size:32px">por mês + IVA · configuração inicial grátis com 12 meses</div>`,
+  ch:`<div class="ch" style="left:40px;top:760px;width:420px;height:700px">${B({eyes:'wink',armR:{sh:-150,el:-20}})}</div><div class="ch" style="left:600px;top:790px;width:390px;height:650px">${G({eyes:'smug',armL:{sh:150,el:20}})}</div>`},
+];
+document.getElementById('root').innerHTML=posts.map((p,i)=>`<div class="p" id="p${i}" style="${p.bg}">${p.ch}${p.html}${foot}</div>`).join('');
+</script></body></html>
