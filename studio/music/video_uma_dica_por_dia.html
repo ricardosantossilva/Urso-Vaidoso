@@ -1,0 +1,181 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>
+*{box-sizing:border-box} html,body{margin:0;background:#000}
+#stage{position:relative;width:1080px;height:1920px;overflow:hidden;font-family:"Inter",sans-serif}
+.layer{position:absolute;left:0;top:0;width:1080px;height:1920px}
+#world{position:absolute;inset:0;transform-origin:540px 1200px}
+.ch{position:absolute} .ch svg{width:100%;height:100%;overflow:visible}
+#sub{position:absolute;left:40px;right:40px;top:190px;text-align:center;font-weight:800;font-size:64px;line-height:1.14;color:#fff;
+  text-shadow:0 6px 0 #000,0 -4px 0 #000,5px 0 0 #000,-5px 0 0 #000,4px 4px 0 #000,-4px -4px 0 #000,4px -4px 0 #000,-4px 4px 0 #000}
+#sub .hl{color:#FFD45C}
+#note{position:absolute;left:0;right:0;top:110px;text-align:center;font-size:56px}
+#flashW{position:absolute;inset:0;background:#fff;opacity:0}
+.card{position:absolute;background:#FBF5EA;border-radius:26px;box-shadow:0 24px 50px rgba(0,0,0,.4);overflow:hidden}
+#endCard{position:absolute;left:0;right:0;text-align:center}
+#endCard .wm{font-family:"Lora",serif;font-weight:700;font-size:120px}
+#endCard .tg{font-family:"Lora",serif;font-style:italic;font-size:56px;margin-top:6px}
+#endCard .url{display:inline-block;margin-top:24px;font-size:44px;font-weight:800;color:#fff;background:#0B2343;padding:14px 34px;border-radius:40px}
+</style></head>
+<body>
+<div id="stage">
+ <div id="world">
+  <div class="layer" id="bg"></div>
+  <div class="layer" id="back"></div>
+  <div class="ch" id="girl"></div>
+  <div class="ch" id="bear"></div>
+  <div class="layer" id="props"></div>
+ </div>
+ <div id="flashW"></div>
+ <div id="note"></div>
+ <div id="sub"></div>
+</div>
+<script src="bear.js"></script><script src="girl.js"></script><script src="scenes.js"></script><script src="scenes2.js"></script>
+<script>
+const D = 40.76;
+// lyric timing measured on the song itself (vocals separated, each line located by speech recognition)
+const TV = 1.9;
+const LY = [
+ [1.9, 'Peça sempre a fatura, com o seu NIF, por favor'],
+ [5.6, 'No IRS isso conta, e a dedução é um amor'],
+ [9.0, 'O papel perde-se, a gaveta não perdoa'],
+ [12.7, 'Mas no e-fatura fica, e a conta fica boa'],
+ [16.9, 'Ai, ai, ai, siga o Urso Vaidoso'],
+ [20.6, 'Uma dica por dia, que é tão proveitoso'],
+ [24.6, 'Ai, ai, ai, carregue no botão'],
+ [27.6, 'E tenha as contas em dia, sem confusão'],
+ [31.3, 'Siga para a dica de amanhã'],
+ [35.0, 'Dúvidas? hello@ursovaidoso.com'],
+];
+const T_CHORUS = 16.9, T_OUTRO = 31.3, T_END = 38.2;
+const $ = id => document.getElementById(id);
+const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
+const ease = x => { x = clamp(x); return x < .5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2 };
+const back = x => { x = clamp(x); const c1 = 1.9, c3 = c1 + 1; return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2) };
+function hl(x) { return x.replace(/(NIF|IRS|dedução|e-fatura|siga o Urso Vaidoso|siga|carregue no botão|contas em dia|hello@ursovaidoso\.com)/gi, '<span class="hl">$1</span>'); }
+const card = (x, y, w, q, inner, rot = 0) => `<div class="card" style="left:${x}px;top:${y}px;width:${w}px;transform:scale(${q}) rotate(${rot}deg);padding:22px 30px;text-align:center">${inner}</div>`;
+const RECEIPT = `<svg width="150" height="210" viewBox="0 0 150 210"><path d="M10 0 H140 V200 l-13 -10 l-13 10 l-13 -10 l-13 10 l-13 -10 l-13 10 l-13 -10 l-13 10 l-13 -10 l-12 10 Z" fill="#fff" stroke="#C9C2B4" stroke-width="3"/><rect x="28" y="22" width="94" height="12" rx="4" fill="#0B2343"/>${[50, 70, 90, 110].map(y => `<rect x="28" y="${y}" width="${60 + (y % 30)}" height="8" rx="3" fill="#9FB3C8"/>`).join('')}<text x="75" y="160" text-anchor="middle" font-family="Inter" font-weight="900" font-size="22" fill="#2FA36B">NIF ✔</text></svg>`;
+const up = (sh, el, inner) => `<g transform="rotate(${-(sh + el)})">${inner}</g>`;
+
+function render(t) {
+  const bpm = 123, B0 = 0.21, tb = Math.max(0, t - B0), ph = tb * bpm / 60 * Math.PI * 2, beat = Math.floor(tb * bpm / 60);
+  const dancing = t >= T_CHORUS && t < T_END;
+  const bob = Math.sin(ph);
+  // backgrounds
+  const w = t < T_CHORUS ? 'arraial' : t < T_OUTRO ? 'disco' : 'terraco';
+  $('bg').innerHTML = w === 'arraial' ? arraialSVG(t) : w === 'disco' ? discoSVG(t) : terracoSVG(t);
+  let white = 0;[T_CHORUS, T_OUTRO].forEach(tc => { const d = t - tc; if (d > -0.08 && d < 0.25) white = Math.max(white, 1 - Math.abs(d - 0.02) / 0.24); });
+  // ---- choreography: look at camera, then a tight pop-video routine together ----
+  const BEAT = 60 / bpm;
+  const A = { // left-arm poses (right arm is mirrored)
+    hang: { sh: 12, el: 8 }, hip: { sh: 38, el: -105 }, up: { sh: 145, el: 8 }, frame: { sh: 125, el: -115 },
+    out: { sh: 85, el: 0 }, low: { sh: 40, el: 10 }, hold: { sh: -55, el: -25 } };
+  const mir = p => ({ sh: -p.sh, el: -p.el });
+  // a step = [left arm, right arm, lean, x-shift, look]; one step lasts 2 beats, snap in 0.12 s then hold
+  const VERSE = [
+    [A.hip, mir(A.hip), 0, 0, 0], [A.hip, mir(A.up), -4, 18, 0], [A.frame, mir(A.frame), 0, 0, 0], [A.up, mir(A.hip), 4, -18, 0]];
+  const CHORUS = [ // together: inner hands joined, outer arm hits, then a face frame and a hip check
+    [A.hip, 'in', -3, 0, 1], [A.up, 'in', -6, 0, 1], [A.frame, mir(A.frame), 0, 0, 0], [A.out, 'in', 3, 0, 1]];
+  const lerp = (a, b, f) => a + (b - a) * f;
+  const lerpArm = (p, q, f) => ({ sh: lerp(p.sh, q.sh, f), el: lerp(p.el, q.el, f) });
+  function routine(list, t0, isGirl) {
+    const k = Math.max(0, (t - t0) / (2 * BEAT)), i = Math.floor(k), fr = (k - i) * 2 * BEAT;
+    const cur = list[i % list.length], prev = list[(i + list.length - 1) % list.length];
+    const f = i === 0 && t < t0 + 0.12 ? ease((t - t0) / 0.12) : ease(fr / 0.12);
+    const arms = st => {
+      let L = st[0], R = st[1];
+      if (R === 'in') R = mir(A.hold);
+      // the girl mirrors the bear so they move as a pair
+      return isGirl ? { L: mir(R), R: mir(L) } : { L, R };
+    };
+    const ap = arms(prev), ac = arms(cur);
+    const dir = isGirl ? -1 : 1;
+    return { armL: lerpArm(ap.L, ac.L, f), armR: lerpArm(ap.R, ac.R, f), lean: lerp(prev[2], cur[2], f) * dir,
+      dx: lerp(prev[3], cur[3], f) * dir, look: lerp(prev[4], cur[4], f) * 0.6 * dir };
+  }
+  const big = t >= T_CHORUS && t < T_OUTRO;
+  let ob, og, bx = 30, gx = 560;
+  const pulse = 1 + 0.025 * Math.max(0, Math.cos(((tb * bpm / 60) % 1) * Math.PI)); // a small bounce on every beat
+  if (t < TV) { // intro: both look straight at the camera, confident
+    ob = { eyes: 'open', look: 0, brow: -6, lean: 0, squash: 1, armL: A.hip, armR: { sh: -120, el: -95 }, monocle: true, mouth: 0.12, twirl: Math.sin(t * 5) * 8 };
+    og = { eyes: 'open', look: 0, brow: 6, lean: 0, squash: 1, armL: { sh: 12, el: 8 }, armR: mir(A.hip), mouth: 0.12 };
+    if (t > 1.3) { og.eyes = 'wink'; }
+  } else if (t < T_CHORUS) {
+    const rb = routine(VERSE, TV, false), rg = routine(VERSE, TV, true);
+    ob = { eyes: 'open', look: rb.look, brow: -6, lean: rb.lean, squash: pulse, armL: rb.armL, armR: rb.armR, monocle: true, mouth: 0.15 };
+    og = { eyes: 'open', look: rg.look, brow: 6, lean: rg.lean, squash: pulse, armL: rg.armL, armR: rg.armR, mouth: 0.15 };
+    bx += rb.dx; gx += rg.dx;
+  } else if (big) {
+    const rb = routine(CHORUS, T_CHORUS, false), rg = routine(CHORUS, T_CHORUS, true);
+    const m = ease((t - T_CHORUS) / 0.5); // they step in towards each other
+    bx = 30 + 95 * m; gx = 560 - 95 * m;
+    ob = { eyes: rb.look > .2 ? 'smug' : 'open', look: rb.look, brow: -6, lean: rb.lean, squash: pulse, armL: rb.armL, armR: rb.armR, monocle: true, mouth: 0.15 };
+    og = { eyes: rg.look < -.2 ? 'smug' : 'open', look: rg.look, brow: 6, lean: rg.lean, squash: pulse, armL: rg.armL, armR: rg.armR, mouth: 0.15 };
+  } else { // outro: back to the camera, final pose, Ursa points at the follow button
+    const m = ease((t - T_OUTRO) / 0.5); bx = 125 - 95 * m; gx = 465 + 95 * m;
+    ob = { eyes: t > 27 ? 'wink' : 'open', look: 0, brow: -6, lean: 0, squash: 1, armL: A.hip, armR: mir(A.hip), monocle: true, mouth: 0.12 };
+    og = { eyes: 'open', look: 0, brow: 6, lean: 0, squash: 1, armL: A.hip, armR: { sh: -150, el: -10 }, mouth: ((t > 31.3 && t < 34.5) || (t > 35.0 && t < 38.0)) ? 0.15 + Math.max(0, Math.sin(t * 22)) * 0.55 : 0.15 };
+  }
+  if (t >= TV && t < T_CHORUS) ob.propR = up(ob.armR.sh, ob.armR.el, `<g transform="translate(-75 -230)">${RECEIPT}</g>`);
+  ob.blink = ob.eyes === 'open' && (t % 3.3) < 0.11; og.blink = og.eyes === 'open' && ((t + 1.4) % 3.7) < 0.11;
+  // one clean turn together on the last beat of the chorus
+  const turnF = (t >= T_OUTRO - BEAT && t < T_OUTRO) ? Math.cos(((t - (T_OUTRO - BEAT)) / BEAT) * Math.PI * 2) : 1;
+  const B = $('bear'), G = $('girl');
+  B.style.left = bx + 'px'; B.style.top = '1000px'; B.style.width = '500px'; B.style.height = '833px'; B.style.transform = `scaleX(${turnF})`;
+  G.style.left = gx + 'px'; G.style.top = '1060px'; G.style.width = '460px'; G.style.height = '767px'; G.style.transform = `scaleX(${turnF})`;
+  B.innerHTML = bearSVG(ob); G.innerHTML = girlSVG(og);
+  // chorus: backing dancers in a V formation, same routine, perfectly in sync
+  let troupe = '';
+  if (big) {
+    const dresses = [['#E2365B', '#B32848'], ['#F2B705', '#C99300'], ['#9B59D0', '#7A3FAE'], ['#D9DDE3', '#AEB4BC'], ['#F07B2E', '#C85F1C'], ['#2E6DB4', '#1F4F86']];
+    const slots = [[0, 760], [1, 800], [2, 840], [3, 840], [4, 800], [5, 760]].map(([i, top]) => [60 + i * 160, top]);
+    slots.forEach(([x, top], k) => {
+      const r = routine(VERSE, T_CHORUS, k >= 3);
+      const d = dresses[k % 6];
+      const sv = girlSVG({ eyes: 'open', look: 0, brow: 6, mouth: 0.15, lean: r.lean, squash: pulse, armL: r.armL, armR: r.armR })
+        .split('#1F7A6E').join(d[0]).split('#165C53').join(d[1]);
+      const enter = back((t - T_CHORUS - 0.06 * Math.abs(k - 2.5)) / 0.45);
+      troupe += `<div class="ch" style="left:${x + r.dx * 0.5}px;top:${top + (1 - enter) * 400}px;width:180px;height:300px;opacity:${clamp(enter)}">${sv}</div>`;
+    });
+  }
+  $('back').innerHTML = troupe;
+  let props = '';
+  // hook (first 2.4 s): big question card
+  if (t < LY[1][0]) {
+    const q = back(t / .35);
+    props += `<div class="card" style="left:110px;top:430px;width:860px;transform:scale(${q}) rotate(-2deg)"><div style="background:#C8202C;color:#fff;font-weight:900;font-size:44px;letter-spacing:.14em;text-align:center;padding:14px 0">DICA DO DIA 🐻</div><div style="padding:24px 30px;text-align:center;font-weight:900;font-size:62px;color:#0A1F3C;line-height:1.1">A fatura do café<br>conta no <span style="color:#C8202C">IRS</span>?</div></div>`;
+  }
+  // verse cards
+  if (t >= LY[1][0] && t < LY[2][0]) props += card(170, 470, 740, back((t - LY[1][0]) / .3), `<div style="font-weight:800;font-size:44px;color:#5A6B80">Fatura com NIF</div><div style="font-weight:900;font-size:84px;color:#2FA36B;line-height:1.05">= conta no IRS ✔</div>`, -2);
+  if (t >= LY[2][0] && t < LY[3][0]) props += card(220, 470, 640, back((t - LY[2][0]) / .3), `<div style="font-size:120px;line-height:1">🗄️📄❌</div><div style="font-weight:900;font-size:52px;color:#C8202C">Papel perde-se</div>`, 2);
+  if (t >= LY[3][0] && t < T_CHORUS) props += card(170, 470, 740, back((t - LY[3][0]) / .3), `<div style="font-weight:800;font-size:44px;color:#5A6B80">Fica tudo no</div><div style="font-weight:900;font-size:96px;color:#0A1F3C;line-height:1.05">e-fatura 💻</div>`, -2);
+  // chorus: pulsing follow button
+  if (t >= T_CHORUS && t < T_OUTRO) {
+    const pulse = 1 + 0.06 * Math.abs(Math.sin(ph / 2));
+    const q = back((t - T_CHORUS) / .35) * pulse;
+    props += `<div style="position:absolute;left:290px;top:440px;width:500px;transform:scale(${q});background:#E2365B;border-radius:60px;box-shadow:0 18px 40px rgba(0,0,0,.45);text-align:center;padding:24px 0;font-weight:900;font-size:72px;color:#fff">+ Seguir</div>`;
+    props += `<div style="position:absolute;left:0;right:0;top:610px;text-align:center;font-weight:900;font-size:50px;color:#FFD45C;text-shadow:0 4px 0 #000">1 dica por dia</div>`;
+    for (let i = 0; i < 6; i++) { const k = ((t - T_CHORUS) * 0.7 + i / 6) % 1; props += `<div style="position:absolute;left:${80 + i * 160 + Math.sin(k * 7 + i) * 30}px;top:${1050 - k * 380}px;opacity:${1 - k};font-size:60px">${['🎵', '🧾', '🎶', '✨', '🎵', '🧾'][i]}</div>`; }
+  }
+  // outro: follow + email card
+  if (t >= T_OUTRO && t < T_END) {
+    props += card(150, 470, 780, back((t - T_OUTRO) / .3), `<div style="font-weight:900;font-size:56px;color:#0A1F3C">Amanhã há mais 👉</div><div style="margin:16px auto 0;width:420px;background:#E2365B;border-radius:50px;padding:14px 0;font-weight:900;font-size:58px;color:#fff">+ Seguir</div>`, -2);
+    if (t >= 35.0) props += card(170, 800, 740, back((t - 35.0) / .3), `<div style="font-weight:800;font-size:40px;color:#5A6B80">Dúvidas?</div><div style="font-weight:900;font-size:50px;color:#7A2E3A">hello@ursovaidoso.com</div>`, 2);
+  }
+  if (t >= T_END) {
+    const q = ease((t - T_END) / .5);
+    props += `<div id="endCard" style="opacity:${q};transform:translateY(${(1 - q) * 40}px);top:420px"><div style="display:inline-block;background:rgba(11,35,67,.82);border-radius:40px;padding:40px 50px"><div class="wm" style="color:#fff">Urso Vaidoso</div><div class="tg" style="color:#FFD45C">Vaidade é ter as contas em dia.</div><div class="url" style="background:#E2365B">+ Seguir · 1 dica por dia</div><div style="margin-top:18px;font-size:44px;font-weight:800;color:#fff">hello@ursovaidoso.com</div><div style="margin-top:6px;font-size:38px;font-weight:700;color:#C9D6E6">ursovaidoso.com</div></div></div>`;
+  }
+  $('props').innerHTML = props;
+  $('flashW').style.opacity = white * 0.85;
+  // subtitles (lyrics)
+  let sub = '';
+  for (let i = 0; i < LY.length; i++) { const a = LY[i][0], b = (LY[i + 1] || [T_END])[0]; if (t >= a - 0.05 && t < b) sub = LY[i][1]; }
+  if (t >= T_END) sub = '';
+  $('sub').innerHTML = hl(sub);
+  $('note').innerHTML = (t >= TV && t < T_END) ? (beat % 2 ? '🎵' : '🎶') : '';
+  const zoom = t < TV ? 1 + 0.03 * ease(t / TV) : 1.03;
+  $('world').style.transform = `scale(${zoom})`;
+}
+window.render = render; render(0);
+</script></body></html>
