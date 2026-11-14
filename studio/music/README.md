@@ -4,8 +4,9 @@ Weekday music videos: a short pop song made in Suno, with the bear and Ursa danc
 
 ## Format (owner-approved, 13 Nov 2026)
 - Song at most 40 s. Structure: [Intro: accordion] short, [Verse] 4 lines with ONE verified tax/money tip, [Chorus] always the same 4 lines, [Outro: spoken female voice] "Siga para a dica de amanhã. Hello arroba ursovaidoso ponto com".
-- Chorus (never changes, it is the series' hook):
-  Ai, ai, ai, siga o Urso Vaidoso / Uma dica por dia, que é tão proveitoso / Ai, ai, ai, carregue no botão / E tenha as contas em dia, sem confusão
+- Chorus (never changes, it is the series' hook; chosen by the owner on 14 Nov 2026, "Vaidoso com razão"):
+  Sou vaidoso, sim, e com toda a razão / Contas em dia, que bela sensação! / Siga o Urso, não seja preguiçoso / Uma dica por dia e até o fisco fica invejoso!
+  In Suno, write it under [Chorus] exactly like this, one line per line. In lines.json and the subtitles use the same 4 lines. Pulsing "+ Seguir · 1 dica por dia" button on "Siga o Urso". (Videos up to 14 Nov 2026 used the earlier chorus "Ai, ai, ai, siga o Urso Vaidoso...".)
 - Suno style (the owner's favourite, "Version C"): `Pop; upbeat 118 BPM bounce; accordion intro, funky bass and bright brass section; high, light male vocal with clipped rhythmic staccato phrasing and a catchy singalong chorus; short plate reverb and a touch of vocal slapback echo; European Portuguese; short, under 40 seconds`. European Portuguese, clean (no double meanings), the tip must be exact.
 - Video: both look at the camera first, then dance together like a pop music video (snap into poses on the beat and hold, mirrored), never flailing. Chorus: they step together, 6 girl bears in coloured dresses in a V behind them doing the same routine. Outro: final pose, Ursa points at "+ Seguir", email card, end card.
 - Subtitles = the lyrics, timed to the singing with `align.py`. Hook card in the first seconds with the question the tip answers. 3 verse cards with the key fact. Pulsing "+ Seguir · 1 dica por dia" in the chorus.
