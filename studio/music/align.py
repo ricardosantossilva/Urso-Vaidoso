@@ -59,7 +59,7 @@ def align_lines(lines, wins, y, sr, e, hop, rec):
         cands = [c for c in cands if c[1] > 0]
         if cands:
             top = max(c[1] for c in cands)
-            a0, sc0 = next((a, sc) for a, sc in cands if sc >= max(0.55, top - 0.1))
+            a0, sc0 = next((a, sc) for a, sc in cands if sc >= max(min(0.55, top), top - 0.1))
         else:
             a0, sc0 = prev + 3.0, 0.0
         best = a0
